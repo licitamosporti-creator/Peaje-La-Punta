@@ -299,6 +299,7 @@ function Filters({ settings }: { settings?: Record<string, string> }) {
     const params = new URLSearchParams(searchParams.toString());
     params.set(field, val);
     params.set('week', 'custom');
+    params.delete('period');
     router.push(`${pathname}?${params.toString()}`);
   };
 
