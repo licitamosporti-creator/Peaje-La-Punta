@@ -125,7 +125,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-3 text-white shrink-0 mr-8">
               <div className="hidden sm:flex items-center justify-center bg-white rounded-md p-1.5 h-11 shadow-sm">
                 <img 
-                  src={settings?.logo_base64 || "/logo-gobernacion.png"} 
+                  src={(settings?.logo_base64 && settings.logo_base64.startsWith('data:image/')) ? settings.logo_base64 : "/logo-gobernacion.png"} 
                   alt="Logo" 
                   className="h-full w-auto object-contain" 
                 />

@@ -12,7 +12,7 @@ function PublicInicioContent() {
   const startDate = searchParams.get('startDate') || '';
   const endDate = searchParams.get('endDate') || '';
   const week = searchParams.get('week');
-  const period = searchParams.get('period') || (startDate || week === 'todas' ? '' : 'last7');
+  const period = searchParams.get('period') || (startDate || week === 'last7' ? '' : 'todas');
 
   const [kpiData, setKpiData] = useState<any>(null);
   const [chartsData, setChartsData] = useState<any>({ traffic: [], revenue: [] });

@@ -70,7 +70,7 @@ export default function LoginPage() {
       <div 
         className="absolute inset-0 z-0 opacity-[0.04] pointer-events-none dark:opacity-[0.02]"
         style={{
-          backgroundImage: `url(${settings?.logo_base64 || '/logo-gobernacion.png'})`,
+          backgroundImage: `url(${(settings?.logo_base64 && settings.logo_base64.startsWith('data:image/')) ? settings.logo_base64 : '/logo-gobernacion.png'})`,
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'contain',
@@ -94,7 +94,7 @@ export default function LoginPage() {
                <div className="h-24 w-24 rounded-full bg-slate-200 dark:bg-slate-800 animate-pulse"></div>
             ) : (
               <img 
-                src={settings?.logo_base64 || "/logo-gobernacion.png"} 
+                src={(settings?.logo_base64 && settings.logo_base64.startsWith('data:image/')) ? settings.logo_base64 : "/logo-gobernacion.png"} 
                 alt="Logo Estación" 
                 className="h-24 w-auto object-contain drop-shadow-sm" 
               />

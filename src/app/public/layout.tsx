@@ -73,7 +73,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           {/* Logo Section */}
           <div className="flex items-center shrink-0 gap-4">
             <img 
-              src={settings.logo_base64 || "/logo-gobernacion.png"} 
+              src={(settings?.logo_base64 && settings.logo_base64.startsWith('data:image/')) ? settings.logo_base64 : "/logo-gobernacion.png"} 
               alt="Logo Institucional" 
               className="h-20 sm:h-24 w-auto object-contain" 
             />
@@ -204,7 +204,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <div className="hidden print:flex items-center justify-between mb-8 border-b-2 border-slate-800 pb-4">
           <div className="flex items-center gap-4">
             <img 
-              src={settings.logo_base64 || "/logo-gobernacion.png"} 
+              src={(settings?.logo_base64 && settings.logo_base64.startsWith('data:image/')) ? settings.logo_base64 : "/logo-gobernacion.png"} 
               alt="Logo Institucional" 
               className="h-16 w-auto object-contain" 
             />

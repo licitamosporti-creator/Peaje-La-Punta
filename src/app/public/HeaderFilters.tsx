@@ -38,7 +38,7 @@ function Filters({ settings }: { settings?: Record<string, string> }) {
 
     try {
       // Pre-load logo image as base64
-      let logoBase64 = settings?.logo_base64 || '';
+      let logoBase64 = (settings?.logo_base64 && settings.logo_base64.startsWith('data:image/')) ? settings.logo_base64 : '';
       if (!logoBase64) {
         try {
           const r = await fetch('/logo-gobernacion.png');

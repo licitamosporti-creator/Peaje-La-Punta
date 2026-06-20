@@ -246,9 +246,9 @@ function TransitoContent() {
   const animatedTotal = useCountUp(totalTraffic);
   const animatedAverage = useCountUp(filteredAverage);
 
-  // --- HEATMAP CALCULATION (All Dates) ---
+  // --- HEATMAP CALCULATION (Filtered Dates) ---
   const daysOfWeekHeatmap = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-  const categoriesHeatmap = ['Cat I', 'Cat II', 'Cat III', 'Cat IV'];
+  const categoriesHeatmap = ['I', 'II', 'III', 'IV'];
   const heatmapUniqueDates: Record<string, Set<string>> = {
     'Lunes': new Set(), 'Martes': new Set(), 'Miércoles': new Set(), 'Jueves': new Set(), 'Viernes': new Set(), 'Sábado': new Set(), 'Domingo': new Set()
   };
@@ -256,13 +256,13 @@ function TransitoContent() {
   const heatmapSums: Record<number, Record<string, Record<string, number>>> = {};
   for (let h = 0; h < 24; h++) {
     heatmapSums[h] = {
-      'Lunes': { 'Cat I': 0, 'Cat II': 0, 'Cat III': 0, 'Cat IV': 0, 'TOTAL': 0 },
-      'Martes': { 'Cat I': 0, 'Cat II': 0, 'Cat III': 0, 'Cat IV': 0, 'TOTAL': 0 },
-      'Miércoles': { 'Cat I': 0, 'Cat II': 0, 'Cat III': 0, 'Cat IV': 0, 'TOTAL': 0 },
-      'Jueves': { 'Cat I': 0, 'Cat II': 0, 'Cat III': 0, 'Cat IV': 0, 'TOTAL': 0 },
-      'Viernes': { 'Cat I': 0, 'Cat II': 0, 'Cat III': 0, 'Cat IV': 0, 'TOTAL': 0 },
-      'Sábado': { 'Cat I': 0, 'Cat II': 0, 'Cat III': 0, 'Cat IV': 0, 'TOTAL': 0 },
-      'Domingo': { 'Cat I': 0, 'Cat II': 0, 'Cat III': 0, 'Cat IV': 0, 'TOTAL': 0 }
+      'Lunes': { 'I': 0, 'II': 0, 'III': 0, 'IV': 0, 'TOTAL': 0 },
+      'Martes': { 'I': 0, 'II': 0, 'III': 0, 'IV': 0, 'TOTAL': 0 },
+      'Miércoles': { 'I': 0, 'II': 0, 'III': 0, 'IV': 0, 'TOTAL': 0 },
+      'Jueves': { 'I': 0, 'II': 0, 'III': 0, 'IV': 0, 'TOTAL': 0 },
+      'Viernes': { 'I': 0, 'II': 0, 'III': 0, 'IV': 0, 'TOTAL': 0 },
+      'Sábado': { 'I': 0, 'II': 0, 'III': 0, 'IV': 0, 'TOTAL': 0 },
+      'Domingo': { 'I': 0, 'II': 0, 'III': 0, 'IV': 0, 'TOTAL': 0 }
     };
   }
 
@@ -589,16 +589,6 @@ function TransitoContent() {
           Resumen General
         </button>
         <button
-          onClick={() => setActiveTab('hora')}
-          className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
-            activeTab === 'hora'
-              ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-          }`}
-        >
-          Tráfico por Hora
-        </button>
-        <button
           onClick={() => setActiveTab('promedio')}
           className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
             activeTab === 'promedio'
@@ -919,9 +909,11 @@ function TransitoContent() {
             </>
           )}
 
-          {activeTab === 'hora' && kpis && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4">
+          {activeTab === 'promedio' && (
+                <div className="space-y-4">
+                  {kpis && (
+                    <div className="mb-8">
+                      <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4">
                 {/* 1. Tráfico Total */}
                 <div className="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
                   <div>
@@ -1044,100 +1036,9 @@ function TransitoContent() {
                   </div>
                 </div>
               </div>
-
-
-
-              {/* Hourly Analysis Section */}
-              <div className="grid grid-cols-1 gap-6">
-                <div className="peaje-card space-y-4 flex flex-col h-full">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center shrink-0 gap-4 mb-2">
-                    <div>
-                      <h4 className="text-base font-bold text-slate-800 dark:text-white">Promedio Horario por Periodo</h4>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Rango analizado: <span className="font-semibold text-slate-700 dark:text-slate-300">
-                          {data.daily.length > 0 ? `${formatChartDate(data.daily[0].date, 'diario')} al ${formatChartDate(data.daily[data.daily.length - 1].date, 'diario')}` : 'N/A'}
-                        </span> <span className="opacity-75">(basado en {kpis.daysCount} días)</span>
-                      </p>
                     </div>
-                    
-                    <div className="flex flex-col gap-1.5 text-xs w-full md:w-auto">
-                      <div className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-lg border border-emerald-100 dark:border-emerald-800/50 flex items-center justify-between gap-6">
-                        <span className="font-medium">Día con MAYOR tráfico</span>
-                        <span className="font-black text-emerald-800 dark:text-emerald-300">{peakDate}</span>
-                      </div>
-                      <div className="bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 px-3 py-1.5 rounded-lg border border-rose-100 dark:border-rose-800/50 flex items-center justify-between gap-6">
-                        <span className="font-medium">Día con MENOR tráfico</span>
-                        <span className="font-black text-rose-800 dark:text-rose-300">{valleyDate}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="h-96 min-h-[300px] w-full flex-grow">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={data.hourly || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" opacity={0.5} />
-                        <XAxis dataKey="hour" tickFormatter={(v) => `${v}:00`} tick={{ fontSize: 10 }} stroke="var(--text-tertiary)" axisLine={false} tickLine={false} tickMargin={8} />
-                        <YAxis tick={{ fontSize: 10 }} stroke="var(--text-tertiary)" axisLine={false} tickLine={false} tickMargin={8} />
-                        <Tooltip 
-                          labelFormatter={(v) => `Hora: ${v}:00`}
-                          contentStyle={{ borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-lg)', background: 'var(--bg-secondary)', fontSize: '11px' }}
-                        />
-                        <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-                        <Bar dataKey="Lunes" fill="#3b82f6" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="Martes" fill="#14b8a6" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="Miércoles" fill="#10b981" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="Jueves" fill="#f59e0b" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="Viernes" fill="#8b5cf6" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="Sábado" fill="#ec4899" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="Domingo" fill="#ef4444" radius={[2, 2, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                  
-                  {/* TABLA HORARIA RESTAURADA */}
-                  <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800">
-                    <div className="overflow-x-auto custom-scrollbar">
-                      <table className="min-w-full text-xs md:text-sm">
-                        <thead>
-                          <tr className="border-b-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
-                            <th className="py-3 px-2 md:px-4 text-center font-bold text-slate-700 dark:text-slate-300">Hora</th>
-                            <th className="py-3 px-2 md:px-4 text-center font-semibold text-slate-600 dark:text-slate-400">Lunes</th>
-                            <th className="py-3 px-2 md:px-4 text-center font-semibold text-slate-600 dark:text-slate-400">Martes</th>
-                            <th className="py-3 px-2 md:px-4 text-center font-semibold text-slate-600 dark:text-slate-400">Miércoles</th>
-                            <th className="py-3 px-2 md:px-4 text-center font-semibold text-slate-600 dark:text-slate-400">Jueves</th>
-                            <th className="py-3 px-2 md:px-4 text-center font-semibold text-slate-600 dark:text-slate-400">Viernes</th>
-                            <th className="py-3 px-2 md:px-4 text-center font-semibold text-slate-600 dark:text-slate-400">Sábado</th>
-                            <th className="py-3 px-2 md:px-4 text-center font-semibold text-slate-600 dark:text-slate-400">Domingo</th>
-                            <th className="py-3 px-2 md:px-4 text-center font-bold text-slate-800 dark:text-slate-200">TOTAL</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {kpis.sortedHours.map((row: any, i: number) => (
-                            <tr key={i} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                              <td className="py-2 px-2 md:px-4 text-center font-mono font-semibold text-slate-700 dark:text-slate-300">
-                                {`${row.hour.toString().padStart(2, '0')}:00`}
-                              </td>
-                              {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map((day) => (
-                                <td key={day} className="py-2 px-2 md:px-4 text-center text-slate-600 dark:text-slate-400">
-                                  {(hourlyMap.get(row.hour)?.[day] || 0).toLocaleString()}
-                                </td>
-                              ))}
-                              <td className="py-2 px-2 md:px-4 text-center font-bold text-indigo-600 dark:text-indigo-400">
-                                {row.total.toLocaleString()}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                  )}
 
-                </div>
-              </div>
-            </div>
-          )}
-
-              {activeTab === 'promedio' && (
-                <div className="space-y-4">
                   <div className="flex flex-col gap-1">
                     <div className="flex justify-between items-center">
                       <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
