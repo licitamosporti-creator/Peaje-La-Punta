@@ -81,10 +81,10 @@ export default function PublicServicios() {
         setLoading(false);
       }
     }
-    fetchServicios();
+      fetchData();
 
     // Auto-refresh every 60 seconds
-    const interval = setInterval(fetchServicios, 60000);
+    const interval = setInterval(fetchData, 60000);
     return () => clearInterval(interval);
   }, []);
 

@@ -11,8 +11,8 @@ function PublicInicioContent() {
   const searchParams = useSearchParams();
   const startDate = searchParams.get('startDate') || '';
   const endDate = searchParams.get('endDate') || '';
-  // Default to last7 so it matches the HeaderFilters default behavior
-  const period = searchParams.get('period') || (startDate ? '' : 'last7');
+  const week = searchParams.get('week');
+  const period = searchParams.get('period') || (startDate || week === 'todas' ? '' : 'last7');
 
   const [kpiData, setKpiData] = useState<any>(null);
   const [chartsData, setChartsData] = useState<any>({ traffic: [], revenue: [] });

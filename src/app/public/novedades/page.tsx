@@ -81,10 +81,10 @@ export default function PublicNovedades() {
         setLoading(false);
       }
     }
-    fetchNovedades();
+      fetchData();
 
     // Auto-refresh every 60 seconds
-    const interval = setInterval(fetchNovedades, 60000);
+    const interval = setInterval(fetchData, 60000);
     return () => clearInterval(interval);
   }, []);
 
