@@ -19,7 +19,7 @@ function RecaudoContent() {
   const startDate = searchParams.get('startDate');
   const endDate = searchParams.get('endDate');
   const week = searchParams.get('week');
-  const period = searchParams.get('period') || (startDate || week === 'todas' ? '' : 'last7');
+  const period = searchParams.get('period') || (startDate || week === 'last7' ? '' : 'todas');
 
   const [selectedPeriod, setSelectedPeriod] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');

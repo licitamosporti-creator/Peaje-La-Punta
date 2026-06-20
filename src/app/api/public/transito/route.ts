@@ -149,12 +149,41 @@ export async function GET(req: NextRequest) {
       hourlyCombined.push(row);
     }
 
+    // 5. Raw hourly traffic by category for heatmap
+    let rawHourlyQuery = db('hourly_traffic')
+      .where('station_id', stationId)
+      .select('date', 'category', 'hour', 'quantity');
+    rawHourlyQuery = applyDateFilter(rawHourlyQuery);
+    const rawHourlyTraffic = await rawHourlyQuery;
+
+    const hourlyMap = new Map<string, { date: string; category: string; hours: number[]; total: number }>();
+    
+    rawHourlyTraffic.forEach(h => {
+      const d = typeof h.date === 'string' ? h.date : h.date.toISOString().split('T')[0];
+      const key = `${d}_${h.category}`;
+      if (!hourlyMap.has(key)) {
+        hourlyMap.set(key, {
+          date: d,
+          category: h.category.replace('Cat ', '').trim(),
+          hours: Array(24).fill(0),
+          total: 0
+        });
+      }
+      const item = hourlyMap.get(key)!;
+      const q = parseInt(h.quantity || '0', 10);
+      item.hours[h.hour] = q;
+      item.total += q;
+    });
+
+    const hourlyData = Array.from(hourlyMap.values());
+
     return NextResponse.json({
       success: true,
       data: {
         daily: dailyCombined,
         categories: categoriesCombined,
-        hourly: hourlyCombined
+        hourly: hourlyCombined,
+        hourlyData: hourlyData
       }
     }, {
       headers: {
