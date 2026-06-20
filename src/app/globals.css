@@ -1,0 +1,430 @@
+@import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
+:root {
+  /* Core Color Tokens (Harmonious Slate & Indigo Palette) */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+  
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-glow: rgba(79, 70, 229, 0.15);
+  
+  --secondary: #0ea5e9;
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --info: #3b82f6;
+  --info-bg: rgba(59, 130, 246, 0.1);
+
+  /* Borders & Shadows */
+  --border-color: #e2e8f0;
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  
+  /* Fonts */
+  --font-sans: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.dark {
+    --bg-primary: #0b0f19;
+    --bg-secondary: #111827;
+    --bg-tertiary: #1f2937;
+    
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-tertiary: #6b7280;
+    
+    --border-color: #374151;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+    --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+
+/* Global Reset overrides */
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* PREMIUM APP COMPONENTS */
+
+/* Flat Card */
+.peaje-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  transition: border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.peaje-card:hover {
+  border-color: rgba(79, 70, 229, 0.3);
+}
+
+/* Badge tags */
+.peaje-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.peaje-badge-success { background: var(--success-bg); color: var(--success); }
+.peaje-badge-warning { background: var(--warning-bg); color: var(--warning); }
+.peaje-badge-danger { background: var(--danger-bg); color: var(--danger); }
+.peaje-badge-info { background: var(--info-bg); color: var(--info); }
+.peaje-badge-neutral { background: var(--bg-tertiary); color: var(--text-secondary); }
+
+/* Premium Tables */
+.peaje-table-container {
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.peaje-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.peaje-table th {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 0.875rem 1rem;
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+
+/* Styles applied ONLY during PDF generation */
+.pdf-generating-element .peaje-table-container,
+.pdf-generating-element.peaje-table-container {
+  overflow: visible !important;
+  max-width: none !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
+.pdf-generating-element .peaje-table {
+  width: 100% !important;
+  font-size: 0.65rem !important; /* Tiny text */
+}
+
+.pdf-generating-element .peaje-table th,
+.pdf-generating-element .peaje-table td {
+  white-space: normal !important;
+  word-break: break-word !important;
+  padding: 1px 4px !important; /* 1px top/bottom, 4px left/right */
+  line-height: 1 !important;
+  height: auto !important;
+  vertical-align: middle !important;
+}
+
+.pdf-generating-element .peaje-table tr {
+  height: auto !important;
+}
+
+.pdf-generating-element .peaje-badge {
+  padding: 1px 4px !important;
+  font-size: 0.55rem !important;
+  line-height: 1 !important;
+  border-radius: 4px !important;
+}
+
+.peaje-table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.peaje-table tr:last-child td {
+  border-bottom: none;
+}
+
+.peaje-table tr:hover td {
+  background: rgba(79, 70, 229, 0.02);
+}
+
+/* Premium Buttons */
+.peaje-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--border-radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.peaje-btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+}
+.peaje-btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+.peaje-btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+.peaje-btn-secondary:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.peaje-btn-danger {
+  background: var(--danger);
+  color: #ffffff;
+}
+.peaje-btn-danger:hover {
+  background: #dc2626;
+}
+
+.peaje-btn-disabled {
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
+/* Inputs & Form Controls */
+.peaje-input, .peaje-select, .peaje-textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.peaje-input:focus, .peaje-select:focus, .peaje-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* Grid Layouts */
+.peaje-grid-1 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.peaje-grid-2 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.peaje-grid-3 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.peaje-grid-4 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+
+@media (min-width: 768px) {
+  .peaje-grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .peaje-grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .peaje-grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .peaje-grid-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Custom Print Styles for High-Fidelity PDF Generation */
+@page {
+  size: 14in 8.5in; /* Tamaño Oficio estricto horizontal (landscape) */
+  margin: 5mm;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+  }
+  /* Ensure all layout wrappers are block to avoid breaking page breaks */
+  body > div,
+  body > div > div {
+    display: block !important;
+  }
+  
+  main {
+    margin: 0 auto !important;
+    width: 100% !important;
+    display: block !important; /* Block is required for page breaks to work */
+  }
+  
+  .peaje-card, .peaje-table-container {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  /* Page break utility for printing */
+  .print-page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+  
+  /* Hide sidebar navigation, filters, buttons, and other interactive elements */
+  nav, 
+  aside, 
+  header, 
+  footer,
+  .no-print,
+  button,
+  form,
+  .peaje-btn,
+  /* Selector de periodo */
+  .flex.bg-slate-100.dark\:bg-slate-900.p-1.rounded-xl {
+    display: none !important;
+  }
+
+  /* Specific PDF Print Modes */
+  body[data-print-mode="charts"] .print-section-table {
+    display: none !important;
+  }
+  
+  body[data-print-mode="table"] .print-section-charts {
+    display: none !important;
+  }
+  
+  body[data-print-mode="table"] .print-section-kpis {
+    display: none !important;
+  }
+
+  /* Reset main layout margins to take full printable width */
+  main,
+  .space-y-8,
+  .space-y-6 {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    display: block !important;
+  }
+
+  /* Make cards look clean without border hover/shadows on paper */
+  .peaje-card {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    margin-bottom: 1.5rem !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Tables formatting for print */
+  .peaje-table-container {
+    border: 1px solid #94a3b8 !important;
+    box-shadow: none !important;
+    page-break-inside: auto !important;
+  }
+  .peaje-table tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+  .peaje-table th {
+    background: #f1f5f9 !important;
+    color: #000000 !important;
+    border-bottom: 2px solid #94a3b8 !important;
+  }
+  .peaje-table td {
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  /* Force charts container to maintain full width */
+  .recharts-responsive-container {
+    width: 100% !important;
+    height: 300px !important;
+  }
+  
+}
+
+/* Heatmap Table Styles */
+.heatmap-table-container {
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-primary);
+  margin-top: 1rem;
+}
+.heatmap-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.65rem;
+}
+.heatmap-table th {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-weight: 700;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  padding: 4px;
+}
+.heatmap-table td {
+  border: 1px solid var(--border-color);
+  text-align: center;
+  padding: 4px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.heatmap-cell {
+  transition: filter 0.2s;
+}
+.heatmap-cell:hover {
+  filter: brightness(0.9);
+}
+.heatmap-col-total {
+  font-weight: 800;
+  background-color: rgba(0,0,0,0.03);
+}
+.dark .heatmap-col-total {
+  background-color: rgba(255,255,255,0.05);
+}
