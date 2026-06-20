@@ -368,6 +368,7 @@ function Filters({ settings }: { settings?: Record<string, string> }) {
                       const params = new URLSearchParams(searchParams.toString());
                       params.delete('startDate');
                       params.delete('endDate');
+                      params.delete('period');
                       params.set('week', 'todas');
                       router.push(`${pathname}?${params.toString()}`);
                       setShowDatePicker(false);
