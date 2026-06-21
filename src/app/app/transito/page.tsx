@@ -661,16 +661,7 @@ export default function AppTransito() {
             >
               Resumen Matriz (Buckets)
             </button>
-            <button
-              onClick={() => setActiveTab('hourly')}
-              className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'hourly'
-                  ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
-                  : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-              }`}
-            >
-              Tráfico por Hora (Detalle)
-            </button>
+
             <button
               onClick={() => setActiveTab('heatmap')}
               className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
@@ -745,111 +736,7 @@ export default function AppTransito() {
                 </div>
               )}
 
-              {activeTab === 'hourly' && (
-                <div className="space-y-4">
-                  {/* Perfil Horario Chart */}
-                  <div className="peaje-card space-y-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-black text-slate-800 dark:text-white flex items-center gap-2">
-                          <TrendingUp className="w-5 h-5 text-orange-500" />
-                          Trafico / Hora (7 Días)
-                        </h3>
-                        <p className="text-sm text-slate-500">Volumen promedio de tránsito por hora (basado en {totalDaysProcessed} días)</p>
-                      </div>
-                      <button 
-                        onClick={() => setShowPeakHours(!showPeakHours)}
-                        className={`px-4 py-1.5 font-bold text-xs rounded-lg shadow-sm border transition-colors ${
-                          showPeakHours 
-                            ? 'bg-orange-500 text-white border-orange-600' 
-                            : 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100'
-                        }`}
-                      >
-                        Horas Pico
-                      </button>
-                    </div>
-                    <div className="h-80 w-full mt-4">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                          <XAxis dataKey="hour" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
-                          <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
-                          <Tooltip 
-                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                            labelStyle={{ fontWeight: 'bold', color: '#1e293b' }}
-                          />
-                          <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '20px' }} />
-                          {daysOfWeek.map(day => (
-                            <Bar 
-                              key={day} 
-                              dataKey={day} 
-                              fill={(colors as any)[day]} 
-                              radius={[2, 2, 0, 0]}
-                              opacity={showPeakHours ? (day === 'Lunes' || day === 'Sábado' || day === 'Viernes' ? 1 : 0.2) : 1}
-                            />
-                          ))}
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
 
-                  <div className="flex justify-between items-center mt-6">
-                    <span className="text-xs font-bold text-slate-500">
-                      Consolidado {viewMode === 'diario' ? 'Diario' : viewMode === 'mensual' ? 'Mensual' : 'Anual'} de Tránsito Horario por Categoría 00-24 (Hoja TRAFICO HORA)
-                    </span>
-                  </div>
-
-                  <div className="peaje-table-container">
-                    <table className="peaje-table">
-                      <thead>
-                        <tr>
-                          <th className="text-center">FECHA</th>
-                          <th className="text-center">CAT.</th>
-                          {hoursColumns.map((colName) => (
-                            <th key={colName} className="text-center px-1 text-[9px]">{colName}</th>
-                          ))}
-                          <th className="bg-indigo-50/50 dark:bg-indigo-950/20 text-center">TOTAL<br/>CAT</th>
-                          <th className="bg-indigo-100/80 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-300 text-center">TOTAL<br/>TRAFICO DIA</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(() => {
-                          const groupedByDate: Record<string, any[]> = {};
-                          consolidatedHourly.forEach((row: any) => {
-                            if (!groupedByDate[row.date]) groupedByDate[row.date] = [];
-                            groupedByDate[row.date].push(row);
-                          });
-
-                          return Object.entries(groupedByDate).map(([date, rows]) => {
-                            const dailyTotal = rows.reduce((sum: number, r: any) => sum + r.total, 0);
-                            return rows.map((row: any, i: number) => (
-                              <tr key={`${date}-${row.category}`}>
-                                {i === 0 && (
-                                  <td rowSpan={rows.length} className="font-mono bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 align-middle text-center whitespace-nowrap px-2">
-                                    {viewMode === 'diario' ? formatShortDate(date) : formatHeaderDate(date, viewMode)}
-                                  </td>
-                                )}
-                                <td className="font-bold text-center border-r border-slate-200 dark:border-slate-800">{row.category}</td>
-                                {row.hours.map((val: number, hrIdx: number) => (
-                                  <td key={hrIdx} className={`text-center px-1 border-r border-slate-100 dark:border-slate-800/50 ${val === 0 ? 'text-slate-300 dark:text-slate-700' : ''}`}>
-                                    {val.toLocaleString()}
-                                  </td>
-                                ))}
-                                <td className="font-bold bg-indigo-50/10 dark:bg-indigo-950/10 text-center border-x border-slate-200 dark:border-slate-800">{row.total.toLocaleString()}</td>
-                                {i === 0 && (
-                                  <td rowSpan={rows.length} className="font-black bg-indigo-50 dark:bg-indigo-950/40 border-l border-slate-300 dark:border-slate-700 align-middle text-center text-indigo-700 dark:text-indigo-400 px-3">
-                                    {dailyTotal.toLocaleString()}
-                                  </td>
-                                )}
-                              </tr>
-                            ));
-                          });
-                        })()}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
 
               {activeTab === 'heatmap' && (
                 <div className="space-y-4">

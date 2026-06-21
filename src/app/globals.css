@@ -305,6 +305,8 @@ body {
     margin-right: auto !important;
     page-break-inside: avoid;
     break-inside: avoid;
+    overflow: visible !important;
+    overflow-x: visible !important;
   }
   
   /* Page break utility for printing */
@@ -312,6 +314,7 @@ body {
     page-break-before: always;
     break-before: page;
   }
+
   
   /* Hide sidebar navigation, filters, buttons, and other interactive elements */
   nav, 
@@ -343,7 +346,8 @@ body {
   /* Reset main layout margins to take full printable width */
   main,
   .space-y-8,
-  .space-y-6 {
+  .space-y-6,
+  .space-y-4 {
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
@@ -384,6 +388,11 @@ body {
     height: 300px !important;
   }
   
+  /* Prevent heatmap clipping */
+  .heatmap-table {
+    width: 100% !important;
+    min-width: unset !important;
+  }
 }
 
 /* Heatmap Table Styles */
