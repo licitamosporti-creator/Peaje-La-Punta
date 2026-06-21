@@ -15,7 +15,9 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
-    const stationId = formData.get('stationId') as string || 'ST-DEFAULT-01';
+    const db = await getDb();
+    const station = await db('stations').first();
+    const stationId = formData.get('stationId') as string || (station ? station.id : 'ST-DEFAULT-01');
 
     if (!file) {
       return NextResponse.json({ error: 'No se proporcionó ningún archivo.' }, { status: 400 });
@@ -212,7 +214,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No se encontraron datos de tráfico válidos en la hoja.' }, { status: 400 });
     }
 
-    const db = await getDb();
+
     
     // Begin transaction
     await db.transaction(async (tx) => {

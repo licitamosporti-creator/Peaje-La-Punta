@@ -24,7 +24,13 @@ export async function evaluateAlerts(db: Knex, stationId: string): Promise<Alert
     return [];
   }
 
-  const activeDates = activeDays.map(d => d.date);
+  // Handle PostgreSQL returning Date objects vs SQLite returning strings
+  const formatDbDate = (d: any) => {
+    if (d instanceof Date) return d.toISOString().split('T')[0];
+    return d;
+  };
+
+  const activeDates = activeDays.map(d => formatDbDate(d.date));
   const processedDates = new Set(activeDates);
   const minDateStr = activeDates[0];
   const maxDateStr = activeDates[activeDates.length - 1];
@@ -59,13 +65,13 @@ export async function evaluateAlerts(db: Knex, stationId: string): Promise<Alert
     .select('date', 'payment_method', 'amount');
 
   // Key arrays by date for fast lookup
-  const trafficMap = new Map(dailySummary.map(t => [t.date, parseInt(t.total_traffic || '0', 10)]));
-  const revenueMap = new Map(dailyRevenue.map(r => [r.date, parseInt(r.total_revenue || '0', 10)]));
+  const trafficMap = new Map(dailySummary.map(t => [formatDbDate(t.date), parseInt(t.total_traffic || '0', 10)]));
+  const revenueMap = new Map(dailyRevenue.map(r => [formatDbDate(r.date), parseInt(r.total_revenue || '0', 10)]));
   
   // Adjustments mapped by date
   const adjustmentsMap = new Map<string, { [key: string]: number }>();
   dailyAdjustments.forEach(adj => {
-    const d = adj.date;
+    const d = formatDbDate(adj.date);
     if (!adjustmentsMap.has(d)) {
       adjustmentsMap.set(d, { SOBRANTE: 0, SOBRANTE_EQUIPO: 0, AJUSTE_DATAFONO: 0 });
     }
@@ -76,7 +82,7 @@ export async function evaluateAlerts(db: Knex, stationId: string): Promise<Alert
   // Payments summary mapped by date
   const paymentsMap = new Map<string, { [key: string]: number }>();
   dailyPayments.forEach(pm => {
-    const d = pm.date;
+    const d = formatDbDate(pm.date);
     if (!paymentsMap.has(d)) {
       paymentsMap.set(d, { EFECTIVO: 0, ELECTRONICO: 0, IPREV_COLPASS: 0 });
     }

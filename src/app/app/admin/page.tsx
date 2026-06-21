@@ -26,52 +26,7 @@ export default function AppAdmin() {
   const [successMsg, setSuccessMsg] = useState('');
   const [saving, setSaving] = useState(false);
 
-  // Hourly Excel Import State
-  const [hourlyExcelFile, setHourlyExcelFile] = useState<File | null>(null);
-  const [isUploadingHourlyExcel, setIsUploadingHourlyExcel] = useState(false);
-  const [hourlyExcelResult, setHourlyExcelResult] = useState<any>(null);
 
-  const handleHourlyExcelFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setHourlyExcelFile(e.target.files[0]);
-    }
-  };
-
-  const handleUploadHourlyExcel = async () => {
-    if (!hourlyExcelFile) return;
-    if (adminData.stations.length === 0) {
-      error('Debe crear al menos una estación antes de importar datos.');
-      return;
-    }
-    const stationId = adminData.stations[0].id;
-    
-    setIsUploadingHourlyExcel(true);
-    setHourlyExcelResult(null);
-    try {
-      const formData = new FormData();
-      formData.append('file', hourlyExcelFile);
-      formData.append('stationId', stationId);
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/app/import-hourly-excel', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formData
-      });
-      const json = await res.json();
-      if (res.ok && json.success) {
-        success('Matriz Horaria importada exitosamente');
-        setHourlyExcelResult({ success: true, message: json.message });
-      } else {
-        error(json.error || 'Error al importar matriz horaria');
-        setHourlyExcelResult({ error: json.error });
-      }
-    } catch (err) {
-      error('Error de conexión al importar Excel');
-    } finally {
-      setIsUploadingHourlyExcel(false);
-      setHourlyExcelFile(null);
-    }
-  };
 
   // Hourly Import State (OCR)
   const [hourlyFile, setHourlyFile] = useState<File | null>(null);
@@ -323,16 +278,6 @@ export default function AppAdmin() {
         >
           Estaciones
         </button>
-        <button
-          onClick={() => setActiveTab('hourly_excel_import')}
-          className="px-4 py-2 text-xs font-bold uppercase border-b-2 cursor-pointer transition-colors"
-          style={{
-            borderColor: activeTab === 'hourly_excel_import' ? 'var(--primary)' : 'transparent',
-            color: activeTab === 'hourly_excel_import' ? 'var(--primary)' : 'var(--text-secondary)'
-          }}
-        >
-          Carga Excel (Tráfico Hora)
-        </button>
       </div>
 
       {/* Tab content */}
@@ -434,72 +379,6 @@ export default function AppAdmin() {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
-      )}
-
-      {/* Hourly Excel Import tab */}
-      {activeTab === 'hourly_excel_import' && (
-        <div className="peaje-card space-y-4">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-emerald-600" />
-            Importar Matriz Horaria (Excel)
-          </h3>
-          <p className="text-[11px] text-slate-500">Sube únicamente el archivo Excel (.xlsx) que contiene la hoja "TRAFICO HORA" para procesar directamente la tabla de horas de 00-01 a 23-24.</p>
-          <hr style={{ borderColor: 'var(--border-color)' }} />
-          
-          <div className="flex flex-col gap-4 max-w-lg">
-            <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-6 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-              <input 
-                type="file" 
-                accept=".xlsx, .xlsm, .xls" 
-                onChange={handleHourlyExcelFileChange}
-                className="hidden" 
-                id="hourly-excel-upload" 
-              />
-              <label htmlFor="hourly-excel-upload" className="cursor-pointer flex flex-col items-center gap-2">
-                <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                  <Clock className="w-6 h-6" />
-                </div>
-                <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                  {hourlyExcelFile ? hourlyExcelFile.name : 'Seleccionar Archivo Excel'}
-                </span>
-                <span className="text-[10px] text-slate-500">Formatos soportados: XLSX, XLSM, XLS</span>
-              </label>
-            </div>
-            
-            <button 
-              onClick={handleUploadHourlyExcel}
-              disabled={!hourlyExcelFile || isUploadingHourlyExcel}
-              className="px-4 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg shadow disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {isUploadingHourlyExcel ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Procesando Excel...
-                </>
-              ) : (
-                'Importar Tráfico Horario'
-              )}
-            </button>
-
-            {hourlyExcelResult && hourlyExcelResult.success && (
-              <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded-lg text-xs">
-                <div className="flex items-center gap-2 font-bold mb-1">
-                  <CheckCircle className="w-4 h-4" /> Importación Exitosa
-                </div>
-                <p>{hourlyExcelResult.message}</p>
-              </div>
-            )}
-            
-            {hourlyExcelResult && hourlyExcelResult.error && (
-              <div className="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 rounded-lg text-xs">
-                <div className="flex items-center gap-2 font-bold mb-1">
-                  <AlertCircle className="w-4 h-4" /> Error en Importación
-                </div>
-                <p>{hourlyExcelResult.error}</p>
-              </div>
-            )}
           </div>
         </div>
       )}

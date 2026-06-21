@@ -349,34 +349,7 @@ export default function AppServicios() {
         </button>
       </div>
 
-      {/* KPI summaries */}
-      <div className="peaje-grid-2">
-        <div className="peaje-card flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Incidentes Abiertos</p>
-            <h3 className="text-xl font-extrabold text-slate-800 dark:text-white">
-              {novedades.filter(n => n.status !== 'CERRADO').length}
-            </h3>
-            <p className="text-[10px] text-slate-400">Pendientes de resolución</p>
-          </div>
-          <div className="p-2.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">
-            <AlertCircle className="w-5 h-5 animate-pulse" />
-          </div>
-        </div>
 
-        <div className="peaje-card flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Resolución de Casos</p>
-            <h3 className="text-xl font-extrabold text-slate-800 dark:text-white">
-              {novedades.length > 0 ? `${((closedNovedades.length / novedades.length) * 100).toFixed(0)}%` : '0%'}
-            </h3>
-            <p className="text-[10px] text-slate-400">{closedNovedades.length} de {novedades.length} resueltos</p>
-          </div>
-          <div className="p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400">
-            <CheckCircle className="w-5 h-5" />
-          </div>
-        </div>
-      </div>
 
       {/* Filter and View Modes Bar */}
       <div className="peaje-card flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -393,17 +366,7 @@ export default function AppServicios() {
             <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
           </div>
 
-          {/* Status Filter */}
-          <select
-            className="peaje-select py-1.5 w-full md:w-44"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="ALL">Todos los estados</option>
-            <option value="ABIERTO">ABIERTO</option>
-            <option value="EN_PROCESO">EN PROCESO</option>
-            <option value="CERRADO">CERRADO</option>
-          </select>
+
 
           {/* Month Filter */}
           <select
@@ -429,225 +392,44 @@ export default function AppServicios() {
             ))}
           </select>
         </div>
-
-        {/* View Toggle */}
-        <div className="flex gap-1 border p-1 rounded-lg" style={{ borderColor: 'var(--border-color)' }}>
-          <button
-            onClick={() => setViewMode('kanban')}
-            className={`p-1.5 rounded cursor-pointer ${viewMode === 'kanban' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600' : 'text-slate-400'}`}
-            title="Vista Kanban"
-          >
-            <Kanban className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-1.5 rounded cursor-pointer ${viewMode === 'list' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600' : 'text-slate-400'}`}
-            title="Vista Tabla"
-          >
-            <List className="w-4 h-4" />
-          </button>
-        </div>
       </div>
 
-      {/* Kanban Board View */}
-      {viewMode === 'kanban' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Col 1: ABIERTO */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: 'var(--border-color)' }}>
-              <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                Abierto ({columns.ABIERTO.length})
-              </span>
+      {/* Reported Items Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filtered.map(nov => (
+          <div key={nov.id} className="peaje-card p-4 space-y-3" style={{ borderLeft: '3px solid #6366f1' }}>
+            <div className="flex justify-between items-start">
+              <span className="peaje-badge peaje-badge-info text-[9px]">{nov.severity}</span>
+              <span className="text-[10px] text-slate-400 font-mono">{nov.date || (nov.start_time ? new Date(nov.start_time).toISOString().split('T')[0] : '')}</span>
             </div>
-            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-              {columns.ABIERTO.map(nov => (
-                <div key={nov.id} className="peaje-card p-4 space-y-3" style={{ borderLeft: '3px solid #3b82f6' }}>
-                  <div className="flex justify-between items-start">
-                    <span className="peaje-badge peaje-badge-info text-[9px]">{nov.severity}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">{nov.date || (nov.start_time ? new Date(nov.start_time).toISOString().split('T')[0] : '')}</span>
-                  </div>
-                  {nov.evidences && (
-                    <div className="mt-2 rounded-md overflow-hidden border border-slate-200">
-                      <img src={nov.evidences} alt="Evidencia" className="w-full h-32 object-cover" />
-                    </div>
-                  )}
-                  <h4 className="text-xs font-bold text-slate-800 dark:text-white">{nov.type}</h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed truncate">{nov.description}</p>
-                  <hr style={{ borderColor: 'var(--border-color)' }} />
-                  <div className="flex items-center justify-between">
-                    <button onClick={() => updateStatus(nov.id, 'EN_PROCESO')} className="peaje-btn peaje-btn-secondary text-[10px] py-1 px-2">
-                      Iniciar Proceso
-                    </button>
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => handleOpenEditModal(nov)} className="text-slate-400 hover:text-indigo-600 p-1" title="Editar">
-                        <FileText className="w-3.5 h-3.5" />
-                      </button>
-                      {isAdmin && (
-                        <button onClick={() => handleDelete(nov.id)} className="text-rose-500 hover:text-rose-700 p-1" title="Eliminar">
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
+            {nov.evidences && (
+              <div className="mt-2 rounded-md overflow-hidden border border-slate-200">
+                <img src={nov.evidences} alt="Evidencia" className="w-full h-32 object-cover" />
+              </div>
+            )}
+            <h4 className="text-xs font-bold text-slate-800 dark:text-white">{nov.type}</h4>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed truncate">{nov.description}</p>
+            <hr style={{ borderColor: 'var(--border-color)' }} />
+            <div className="flex items-center justify-end">
+              <div className="flex items-center gap-1">
+                <button onClick={() => handleOpenEditModal(nov)} className="text-slate-400 hover:text-indigo-600 p-1" title="Editar">
+                  <FileText className="w-3.5 h-3.5" />
+                </button>
+                {isAdmin && (
+                  <button onClick={() => handleDelete(nov.id)} className="text-rose-500 hover:text-rose-700 p-1" title="Eliminar">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-
-          {/* Col 2: EN_PROCESO */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: 'var(--border-color)' }}>
-              <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                En Proceso ({columns.EN_PROCESO.length})
-              </span>
-            </div>
-            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-              {columns.EN_PROCESO.map(nov => (
-                <div key={nov.id} className="peaje-card p-4 space-y-3" style={{ borderLeft: '3px solid #f59e0b' }}>
-                  <div className="flex justify-between items-start">
-                    <span className="peaje-badge peaje-badge-warning text-[9px]">{nov.severity}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">{nov.date || (nov.start_time ? new Date(nov.start_time).toISOString().split('T')[0] : '')}</span>
-                  </div>
-                  {nov.evidences && (
-                    <div className="mt-2 rounded-md overflow-hidden border border-slate-200">
-                      <img src={nov.evidences} alt="Evidencia" className="w-full h-32 object-cover" />
-                    </div>
-                  )}
-                  <h4 className="text-xs font-bold text-slate-800 dark:text-white">{nov.type}</h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed truncate">{nov.description}</p>
-                  <hr style={{ borderColor: 'var(--border-color)' }} />
-                  <div className="flex items-center justify-between">
-                    <div className="flex gap-1.5">
-                      <button onClick={() => updateStatus(nov.id, 'ABIERTO')} className="peaje-btn peaje-btn-secondary text-[10px] py-1 px-2">
-                        Reabrir
-                      </button>
-                      <button onClick={() => updateStatus(nov.id, 'CERRADO')} className="peaje-btn peaje-btn-primary text-[10px] py-1 px-2" disabled={!isInterventorOrAdmin}>
-                        Cerrar Novedad
-                      </button>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => handleOpenEditModal(nov)} className="text-slate-400 hover:text-indigo-600 p-1" title="Editar">
-                        <FileText className="w-3.5 h-3.5" />
-                      </button>
-                      {isAdmin && (
-                        <button onClick={() => handleDelete(nov.id)} className="text-rose-500 hover:text-rose-700 p-1" title="Eliminar">
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        ))}
+        {filtered.length === 0 && !loading && (
+          <div className="col-span-full py-12 text-center text-slate-400">
+            No se encontraron novedades reportadas.
           </div>
-
-          {/* Col 3: CERRADO */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: 'var(--border-color)' }}>
-              <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                Cerrado ({columns.CERRADO.length})
-              </span>
-            </div>
-            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-              {columns.CERRADO.map(nov => (
-                <div key={nov.id} className="peaje-card p-4 space-y-3" style={{ borderLeft: '3px solid #10b981' }}>
-                  <div className="flex justify-between items-start">
-                    <span className="peaje-badge peaje-badge-success text-[9px]">{nov.severity}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">{nov.date || (nov.start_time ? new Date(nov.start_time).toISOString().split('T')[0] : '')}</span>
-                  </div>
-                  {nov.evidences && (
-                    <div className="mt-2 rounded-md overflow-hidden border border-slate-200">
-                      <img src={nov.evidences} alt="Evidencia" className="w-full h-32 object-cover" />
-                    </div>
-                  )}
-                  <h4 className="text-xs font-bold text-slate-800 dark:text-white">{nov.type}</h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed truncate">{nov.description}</p>
-                  <p className="text-[10px] bg-emerald-50 dark:bg-emerald-950/20 p-2 rounded text-emerald-800 dark:text-emerald-400">
-                    <strong>Causa Raíz:</strong> {nov.root_cause}
-                  </p>
-                  <hr style={{ borderColor: 'var(--border-color)' }} />
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-slate-400">Cerrado por: {nov.closer_name || 'Interventor'}</span>
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => handleOpenEditModal(nov)} className="text-slate-400 hover:text-indigo-600 p-1" title="Editar">
-                        <FileText className="w-3.5 h-3.5" />
-                      </button>
-                      {isAdmin && (
-                        <button onClick={() => handleDelete(nov.id)} className="text-rose-500 hover:text-rose-700 p-1" title="Eliminar">
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Table View */}
-      {viewMode === 'list' && (
-        <div className="peaje-table-container">
-          <table className="peaje-table">
-            <thead>
-              <tr>
-                <th>Fecha Inicio</th>
-                <th>Tipo</th>
-                <th>Severidad</th>
-                <th>Estado</th>
-                <th>Carril/Caja</th>
-                <th>Descripción</th>
-                <th>Causa Raíz (Cierre)</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(nov => (
-                <tr key={nov.id}>
-                  <td className="font-mono text-xs">{new Date(nov.start_time).toLocaleString()}</td>
-                  <td className="font-bold text-xs">{nov.type}</td>
-                  <td>
-                    <span className={`peaje-badge text-[9px] ${nov.severity === 'CRITICA' ? 'peaje-badge-danger' : nov.severity === 'ALTA' ? 'peaje-badge-warning' : 'peaje-badge-neutral'}`}>
-                      {nov.severity}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={`peaje-badge text-[9px] ${nov.status === 'CERRADO' ? 'peaje-badge-success' : 'peaje-badge-warning'}`}>
-                      {nov.status}
-                    </span>
-                  </td>
-                  <td>{nov.lane_box || '-'}</td>
-                  <td className="max-w-xs truncate text-xs">{nov.description}</td>
-                  <td className="max-w-xs truncate text-xs font-semibold text-emerald-700 dark:text-emerald-400">
-                    {nov.root_cause || '-'}
-                  </td>
-                  <td className="flex gap-2">
-                    {nov.status !== 'CERRADO' ? (
-                      <button onClick={() => updateStatus(nov.id, 'EN_PROCESO')} className="peaje-btn peaje-btn-secondary text-[10px] py-1 px-2">
-                        Iniciar Proceso
-                      </button>
-                    ) : (
-                      <span className="text-[10px] text-slate-400 font-semibold uppercase">Resuelto</span>
-                    )}
-                    <button onClick={() => handleOpenEditModal(nov)} className="text-slate-400 hover:text-indigo-600 p-1 rounded">
-                      <FileText className="w-3.5 h-3.5" />
-                    </button>
-                    {isAdmin && (
-                      <button onClick={() => handleDelete(nov.id)} className="text-rose-500 hover:bg-rose-50 p-1 rounded">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* CREATE NOVEDAD MODAL OVERLAY */}
       {showCreateModal && (
